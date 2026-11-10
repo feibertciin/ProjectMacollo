@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macollo | Ingenieria de Datos para Agricultura Inteligente</title>
+    <meta name="description" content="Landing del proyecto de ingenieria de datos Macollo: ETL, analisis exploratorio, transformacion y dashboard interactivo para agricultura inteligente.">
+    <style>
+        :root {
+            --green: #2E8B57;
+            --green-dark: #0f3d2e;
+            --green-mid: #1c6b4c;
+            --lime: #8BC34A;
+            --teal: #2E86AB;
+            --ink: #17262e;
+            --muted: #5c6b73;
+            --bg: #f3f7f5;
+            --card: #ffffff;
+            --border: #e2ebe6;
+            --shadow: 0 14px 40px rgba(23, 38, 46, 0.08);
+            --radius: 20px;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", system-ui, -apple-system, Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 6% 0%, rgba(139, 195, 74, 0.14), transparent 34%),
+                radial-gradient(circle at 100% 4%, rgba(46, 134, 171, 0.12), transparent 32%),
+                var(--bg);
+            line-height: 1.6;
+        }
+        a { color: inherit; }
+        .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+
+        /* Nav */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 14px 0;
+        }
+        .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+        .brand-mark {
+            width: 40px; height: 40px; border-radius: 13px;
+            display: grid; place-items: center;
+            background: linear-gradient(135deg, var(--green), var(--teal));
+            box-shadow: 0 8px 18px rgba(46, 139, 87, 0.28);
+        }
+        .brand-mark svg { width: 22px; height: 22px; }
+        .brand-text strong { display: block; font-size: 1.05rem; letter-spacing: -0.02em; }
+        .brand-text span { display: block; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--muted);
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--green); }
+        .nav-cta {
+            padding: 10px 18px;
+            border-radius: 11px;
+            background: var(--green-dark);
+            color: #fff !important;
+            box-shadow: 0 8px 18px rgba(15, 61, 46, 0.22);
+        }
+        .nav-cta:hover { background: var(--green-mid); }
+
+        /* Hero */
+        .hero { padding: 64px 0 30px; }
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            padding: 58px 56px;
+            color: #fff;
+            background:
+                radial-gradient(circle at 86% 14%, rgba(139, 195, 74, 0.55), transparent 42%),
+                linear-gradient(120deg, #0b2f23 0%, #1c6b4c 55%, #2E86AB 100%);
+            box-shadow: 0 28px 70px rgba(15, 61, 46, 0.28);
+        }
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 420px; height: 420px;
+            right: -120px; bottom: -190px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 0 60px rgba(255, 255, 255, 0.05), 0 0 0 120px rgba(255, 255, 255, 0.03);
+        }
+        .kicker {
+            display: inline-block;
+            font-size: 0.74rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 8px 15px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            margin-bottom: 22px;
+        }
+        .hero h1 {
+            margin: 0 0 18px;
+            font-size: clamp(2rem, 4.6vw, 3.4rem);
+            line-height: 1.08;
+            letter-spacing: -0.035em;
+            max-width: 780px;
+        }
+        .hero p {
+            margin: 0 0 30px;
+            max-width: 660px;
+            font-size: 1.06rem;
+            color: rgba(255, 255, 255, 0.87);
+        }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; position: relative; z-index: 2; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 13px 22px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            text-decoration: none;
+            transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: #fff; color: var(--green-dark); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18); }
+        .btn-ghost { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn svg { width: 17px; height: 17px; }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin: 26px 0 0;
+        }
+        .stat {
+            background: rgba(255, 255, 255, 0.11);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px 18px;
+        }
+        .stat b { display: block; font-size: 1.65rem; line-height: 1.1; }
+        .stat span { font-size: 0.76rem; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255, 255, 255, 0.74); }
+
+        /* Sections */
+        section { padding: 40px 0; }
+        .section-head { max-width: 720px; margin-bottom: 26px; }
+        .eyebrow {
+            display: inline-block;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 10px;
+        }
+        h2 {
+            margin: 0 0 12px;
+            font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+        }
+        .section-head p { margin: 0; color: var(--muted); font-size: 1rem; }
+
+        .grid { display: grid; gap: 18px; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px;
+            box-shadow: var(--shadow);
+        }
+        .card h3 { margin: 0 0 10px; font-size: 1.08rem; letter-spacing: -0.01em; }
+        .card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+        .card ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 0.92rem; }
+        .card li { margin-bottom: 7px; }
+        .icon-box {
+            width: 44px; height: 44px;
+            border-radius: 13px;
+            display: grid; place-items: center;
+            margin-bottom: 16px;
+            background: #e9f5ee;
+            color: var(--green);
+        }
+        .icon-box.teal { background: #e8f3f8; color: var(--teal); }
+        .icon-box.lime { background: #f1f8e8; color: #5d8f1f; }
+        .icon-box svg { width: 22px; height: 22px; }
+        .step-num {
+            width: 36px; height: 36px;
+            border-radius: 11px;
+            display: grid; place-items: center;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, var(--green), var(--teal));
+            margin-bottom: 14px;
+            box-shadow: 0 8px 16px rgba(46, 139, 87, 0.24);
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            align-items: stretch;
+        }
+        .node {
+            background: #f7fbf8;
+            border: 1px dashed #b9dcc8;
+            border-radius: 15px;
+            padding: 18px 14px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.86rem;
+            color: #1c4b39;
+        }
+        .node small { display: block; font-weight: 500; color: var(--muted); margin-top: 4px; font-size: 0.76rem; }
+
+        /* Table */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        thead { background: var(--green-dark); color: #fff; }
+        th, td { text-align: left; padding: 13px 18px; }
+        tbody tr { border-top: 1px solid var(--border); }
+        tbody tr:hover { background: #f7fbf8; }
+        td code {
+            background: #eef4f1;
+            color: #1c4b39;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.83rem;
+        }
+
+        /* Tools */
+        .tools { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tool {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(23, 38, 46, 0.05);
+        }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+        .dot.teal { background: var(--teal); }
+        .dot.lime { background: var(--lime); }
+
+        /* Preview */
+        .preview {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+        .kpi-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .kpi {
+            background: #f7fbf8;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px 17px;
+        }
+        .kpi span { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+        .kpi b { display: block; font-size: 1.5rem; margin-top: 3px; }
+        .kpi b.green { color: var(--green); }
+        .kpi b.teal { color: var(--teal); }
+        .chart-card { background: #f7fbf8; border: 1px solid var(--border); border-radius: 15px; padding: 18px; }
+        .chart-title { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+        .bars { display: flex; align-items: flex-end; gap: 12px; height: 150px; }
+        .bar { flex: 1; border-radius: 8px 8px 4px 4px; background: linear-gradient(180deg, var(--lime), var(--green)); position: relative; }
+        .bar span { position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+        .legend { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-top: 30px; }
+
+        /* Callout */
+        .callout {
+            border-left: 5px solid var(--teal);
+            background: #eef6fa;
+            border-radius: 0 16px 16px 0;
+            padding: 18px 22px;
+            color: #274b5c;
+            font-size: 0.94rem;
+        }
+        .callout strong { color: #163c4d; }
+
+        /* Steps to run */
+        .code-card {
+            background: #0f2720;
+            border-radius: 16px;
+            padding: 22px;
+            overflow-x: auto;
+            color: #c9f0d8;
+            font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+            font-size: 0.84rem;
+            line-height: 1.85;
+        }
+        .code-card .comment { color: #7fa892; }
+        .code-card .cmd { color: #ffffff; }
+        .code-card .accent { color: #8BC34A; }
+
+        /* Footer */
+        footer {
+            margin-top: 20px;
+            padding: 30px 0 44px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+        .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; align-items: center; }
+        .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+        .footer-links a { text-decoration: none; font-weight: 600; color: var(--green); }
+
+        @media (max-width: 860px) {
+            .nav-links { display: none; }
+            .hero-card { padding: 40px 28px; }
+            .preview { grid-template-columns: 1fr; }
+            .nav-cta { display: inline-flex; }
+        }
+        @media (max-width: 520px) {
+            .wrap { width: calc(100% - 28px); }
+            .hero { padding-top: 34px; }
+            .kpi-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="wrap nav-inner">
+        <a class="brand" href="#inicio">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21c0-6 3-10 9-11-1 7-4 10-9 11Z"/>
+                    <path d="M12 21C12 15 9 11 3 10c1 7 4 10 9 11Z"/>
+                    <path d="M12 21V9"/>
+                </svg>
+            </span>
+            <span class="brand-text">
+                <strong>Macollo</strong>
+                <span>Ingenieria de datos</span>
+            </span>
+        </a>
+        <nav class="nav-links" aria-label="Navegacion principal">
+            <a href="#proyecto">Proyecto</a>
+            <a href="#pipeline">Pipeline</a>
+            <a href="#datos">Datos</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#ejecutar">Ejecucion</a>
+            <a class="nav-cta" href="http://localhost:8501" target="_blank" rel="noopener">Abrir app</a>
+        </nav>
+    </div>
+</header>
+
+<main id="inicio">
+    <section class="hero">
+        <div class="wrap">
+            <div class="hero-card">
+                <span class="kicker">Agricultura inteligente con datos</span>
+                <h1>De la medicion en el invernadero a decisiones agronomicas</h1>
+                <p>
+                    Macollo es una plataforma de ingenieria de datos que convierte 540
+                    mediciones crudas de cultivo en un pipeline reproducible de limpieza,
+                    analisis exploratorio, transformacion y visualizacion interactiva.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="http://localhost:8501" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 3 5-6"/></svg>
+                        Abrir dashboard
+                    </a>
+                    <a class="btn btn-ghost" href="Cuaderno1_macollo.ipynb" download>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+                        Descargar cuaderno
+                    </a>
+                    <a class="btn btn-ghost" href="dashboard_reporte.html">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+                        Ver reporte ejecutivo
+                    </a>
+                </div>
+                <div class="stats">
+                    <div class="stat"><b>540</b><span>Registros</span></div>
+                    <div class="stat"><b>26</b><span>Fechas</span></div>
+                    <div class="stat"><b>11</b><span>Variables</span></div>
+                    <div class="stat"><b>41</b><span>Columnas codificadas</span></div>
+                    <div class="stat"><b>20</b><span>Unidades experimentales</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proyecto">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">El proyecto</span>
+                <h2>Ingenieria de datos aplicada al invernadero</h2>
+                <p>
+                    El proyecto integra el trabajo experimental de cuatro tratamientos y
+                    cinco plantas por fila con variables ambientales y de crecimiento. El
+                    objetivo es garantizar datos confiables y listos para analitica avanzada.
+                </p>
+            </div>
+            <div class="grid grid-3">
+                <article class="card">
+                    <div class="icon-box" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 22v-6"/><path d="M4.9 4.9l4.2 4.2"/><path d="M14.9 14.9l4.2 4.2"/><path d="M2 12h6"/><path d="M16 12h6"/><path d="M4.9 19.1l4.2-4.2"/><path d="M14.9 9.1l4.2-4.2"/></svg>
+                    </div>
+                    <h3>ETL reproducible</h3>
+                    <p>Extraccion, limpieza y carga documentadas paso a paso, con trazabilidad de cada decision sobre el dato original.</p>
+                </article>
+                <article class="card">
+                    <div class="icon-box teal" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="4" width="3" height="13"/></svg>
+                    </div>
+                    <h3>Analisis exploratorio</h3>
+                    <p>Distribuciones, valores atipicos, correlaciones y evolución temporal para entender el comportamiento del cultivo.</p>
+                </article>
+                <article class="card">
+                    <div class="icon-box lime" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h13"/><circle cx="18" cy="12" r="2"/></svg>
+                    </div>
+                    <h3>Datos listos para ML</h3>
+                    <p>One Hot Encoding sobre las variables categoricas para entregar una matriz numerica apta para modelos predictivos.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="pipeline">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Pipeline</span>
+                <h2>Seis etapas, un solo flujo confiable</h2>
+                <p>Cada etapa tiene una responsabilidad clara y produce un artefacto verificable.</p>
+            </div>
+            <div class="pipeline" aria-label="Pipeline de datos">
+                <div class="node">1. Extraccion<small>CSV delimitado por ;</small></div>
+                <div class="node">2. Limpieza<small>tipos, fechas y nulos</small></div>
+                <div class="node">3. Analisis<small>EDA y visualizacion</small></div>
+                <div class="node">4. Transformacion<small>One Hot Encoding</small></div>
+                <div class="node">5. Persistencia<small>CSV limpio y codificado</small></div>
+                <div class="node">6. Despliegue<small>Streamlit local y cloud</small></div>
+            </div>
+
+            <div class="grid grid-3" style="margin-top: 22px;">
+                <article class="card">
+                    <div class="step-num">1</div>
+                    <h3>Extraccion e inspeccion</h3>
+                    <p>Lectura de <code>Data_Mocollo1.csv</code> con validacion de dimensiones, tipos y estructura de columnas.</p>
+                </article>
+                <article class="card">
+                    <div class="step-num">2</div>
+                    <h3>Limpieza y normalizacion</h3>
+                    <p>Conversion de decimales europeos, fechas a formato ISO, nulos controlados y humedad normalizada al rango 0-1.</p>
+                </article>
+                <article class="card">
+                    <div class="step-num">3</div>
+                    <h3>Analisis exploratorio</h3>
+                    <p>Histogramas, boxplots, densidades, series temporales y matriz de correlacion de Pearson.</p>
+                </article>
+                <article class="card">
+                    <div class="step-num">4</div>
+                    <h3>Transformacion</h3>
+                    <p>Variables categoricas convertidas a columnas binarias con <code>get_dummies</code>.</p>
+                </article>
+                <article class="card">
+                    <div class="step-num">5</div>
+                    <h3>Persistencia</h3>
+                    <p>Generacion de <code>Data_Mocollo1_Limpio.csv</code> y <code>Data_Mocollo1_Transformado.csv</code>.</p>
+                </article>
+                <article class="card">
+                    <div class="step-num">6</div>
+                    <h3>Publicacion</h3>
+                    <p>Dashboard Streamlit con filtros por fecha, tratamiento, planta y responsable, mas el cuaderno ejecutable.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="datos">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Diccionario de datos</span>
+                <h2>Que contiene el dataset</h2>
+                <p>Once variables que combinan condiciones ambientales con el estado de cada planta.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Descripcion</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>Fecha</code></td><td>Fecha</td><td>Dia de la medicion en formato dd/mm/aaaa.</td></tr>
+                        <tr><td><code>Responsable</code></td><td>Categorica</td><td>Persona que registra la medicion (5 integrantes).</td></tr>
+                        <tr><td><code>T_Ext_C</code></td><td>Numerica</td><td>Temperatura exterior en grados Celsius.</td></tr>
+                        <tr><td><code>T_Int_C</code></td><td>Numerica</td><td>Temperatura interior del invernadero en Celsius.</td></tr>
+                        <tr><td><code>Humedad_Pct</code></td><td>Numerica</td><td>Humedad relativa en proporcion (0-1).</td></tr>
+                        <tr><td><code>Fila</code></td><td>Categorica</td><td>Tratamiento experimental: T0, T1, T2 y T3.</td></tr>
+                        <tr><td><code>Planta</code></td><td>Categorica</td><td>Identificador de planta dentro de la fila: P1 a P5.</td></tr>
+                        <tr><td><code>ID_Planta</code></td><td>Categorica</td><td>Clave compuesta fila-planta, por ejemplo T0-P1.</td></tr>
+                        <tr><td><code>T_Planta_C</code></td><td>Numerica</td><td>Temperatura de la planta en grados Celsius.</td></tr>
+                        <tr><td><code>pH</code></td><td>Numerica</td><td>pH del sustrato.</td></tr>
+                        <tr><td><code>Altura_cm</code></td><td>Numerica</td><td>Altura de la planta en centimetros.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="calidad">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Calidad y decisiones</span>
+                <h2>Reglas claras sobre el dato</h2>
+                <p>La limpieza no borra informacion sin criterio: documenta y preserva la trazabilidad.</p>
+            </div>
+            <div class="grid grid-2">
+                <article class="card">
+                    <h3>Hallazgos del dataset</h3>
+                    <ul>
+                        <li><strong>540 registros</strong> y 26 fechas entre el 14/09/2026 y el 02/11/2026.</li>
+                        <li><strong>480 valores nulos</strong> en variables numericas, conservados como ausencia de lectura.</li>
+                        <li><strong>60 registros de humedad</strong> normalizados de porcentaje a proporcion.</li>
+                        <li><strong>Completitud global del 85,2%</strong> sobre las seis variables numericas.</li>
+                        <li><strong>Sin duplicados</strong> en el dataset limpio.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h3>Decisiones de transformacion</h3>
+                    <ul>
+                        <li>Fecha <code>dd/mm/aaaa</code> convertida a tipo datetime.</li>
+                        <li>Coma decimal europea convertida a punto decimal.</li>
+                        <li>Humedad relativa acotada al rango 0-1.</li>
+                        <li>Outliers detectados por IQR: se senalan, no se eliminan.</li>
+                        <li>Variables categoricas transformadas con One Hot Encoding.</li>
+                        <li>Salidas exportadas en CSV limpio y CSV transformado.</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Producto final</span>
+                <h2>Un dashboard para decidir, no solo para mirar</h2>
+                <p>Filtra por fecha, responsable, tratamiento y planta. Compara alturas, temperaturas y evolución del cultivo.</p>
+            </div>
+            <div class="preview">
+                <div>
+                    <div class="kpi-row">
+                        <div class="kpi"><span>Responsable</span><b class="green">Juan</b></div>
+                        <div class="kpi"><span>Plantas medidas</span><b>20</b></div>
+                        <div class="kpi"><span>T exterior / interior</span><b class="teal">20.2 / 22.0 C</b></div>
+                        <div class="kpi"><span>Altura promedio</span><b class="green">108.3 cm</b></div>
+                    </div>
+                    <div class="callout" style="margin-top: 16px;">
+                        <strong>Reporte ejecutivo:</strong> el dashboard exporta un informe HTML
+                        con KPIs, grafico consolidado y tabla de mediciones individuales.
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Altura promedio por tratamiento</div>
+                    <div class="bars" role="img" aria-label="Grafico de altura promedio por tratamiento">
+                        <div class="bar" style="height: 72%"><span>T0</span></div>
+                        <div class="bar" style="height: 88%"><span>T1</span></div>
+                        <div class="bar" style="height: 55%"><span>T2</span></div>
+                        <div class="bar" style="height: 79%"><span>T3</span></div>
+                    </div>
+                    <div class="legend"><span>Tratamiento</span><span>Datos del reporte</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stack">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Stack tecnologico</span>
+                <h2>Herramientas empleadas</h2>
+                <p>Un stack abierto y reproducible, desde el analisis hasta el despliegue.</p>
+            </div>
+            <div class="tools">
+                <span class="tool"><span class="dot"></span>Python 3.11</span>
+                <span class="tool"><span class="dot teal"></span>pandas</span>
+                <span class="tool"><span class="dot lime"></span>NumPy</span>
+                <span class="tool"><span class="dot"></span>scikit-learn</span>
+                <span class="tool"><span class="dot teal"></span>Matplotlib</span>
+                <span class="tool"><span class="dot lime"></span>Seaborn</span>
+                <span class="tool"><span class="dot"></span>Plotly</span>
+                <span class="tool"><span class="dot teal"></span>Streamlit</span>
+                <span class="tool"><span class="dot lime"></span>Jupyter / nbconvert</span>
+                <span class="tool"><span class="dot"></span>HTML5 + CSS3</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="ejecutar">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Puesta en marcha</span>
+                <h2>Ejecuta la plataforma en local</h2>
+                <p>Crea un entorno virtual, instala las dependencias y abre la aplicacion en el navegador.</p>
+            </div>
+            <div class="grid grid-2">
+                <div class="code-card" aria-label="Comandos para Windows PowerShell">
+                    <div class="comment"># Windows (PowerShell)</div>
+                    <div><span class="cmd">py -3.11 -m venv .venv</span></div>
+                    <div><span class="cmd">.\.venv\Scripts\Activate.ps1</span></div>
+                    <div><span class="cmd">python -m pip install -r requirements.txt</span></div>
+                    <div><span class="cmd">python -m ipykernel install --user --name macollo --display-name "Macollo (venv)"</span></div>
+                    <div><span class="accent">streamlit run app.py</span></div>
+                </div>
+                <div class="code-card" aria-label="Comandos para macOS y Linux">
+                    <div class="comment"># macOS / Linux</div>
+                    <div><span class="cmd">python3.11 -m venv .venv</span></div>
+                    <div><span class="cmd">source .venv/bin/activate</span></div>
+                    <div><span class="cmd">python -m pip install -r requirements.txt</span></div>
+                    <div><span class="cmd">python -m ipykernel install --user --name macollo --display-name "Macollo (venv)"</span></div>
+                    <div><span class="accent">streamlit run app.py</span></div>
+                </div>
+            </div>
+            <div class="callout" style="margin-top: 18px;">
+                La aplicacion queda disponible en <strong>http://localhost:8501</strong>.
+                Para desplegarla en Streamlit Cloud, publica el repositorio y selecciona
+                <code>app.py</code> como archivo principal.
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap footer-inner">
+        <div>
+            <strong>Macollo</strong> - Plataforma de Agricultura Inteligente. Proyecto academico de
+            ingenieria y analisis de datos, 2026.
+        </div>
+        <div class="footer-links">
+            <a href="app.py">app.py</a>
+            <a href="Cuaderno1_macollo.ipynb">Cuaderno</a>
+            <a href="dashboard_reporte.html">Reporte</a>
+            <a href="README.md">README</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
